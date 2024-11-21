@@ -2,8 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { sendMessage } from "../store/contact/contactThunks";
-import { resetState } from "../store/contact/contactSlice";
+import { resetState, sendMessageRequest } from "../store/contact/contactSlice";
 import AlertComponent from "../components/AlertComponent/AlertComponent";
 import "../home/style.css";
 import { ToastContainer } from "react-toastify";
@@ -33,7 +32,7 @@ export default function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(sendMessage(formData)); // Dispatch Axios-based thunk
+    dispatch(sendMessageRequest(formData));
     setFormData({ name: "", email: "", message: "" }); // Reset form
   };
 

@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { sendMessage } from "./contactThunks";
 import {
   STATUS_IDLE,
   STATUS_PENDING,
@@ -8,12 +7,12 @@ import {
   ERROR_MESSAGE_DEFAULT,
 } from "../../constants/status/status";
 
-// Initial state for contact form
+// Initial state
 const initialState = {
   status: STATUS_IDLE,
-  message: null, // Holds success message
-  error: null, // Holds error message
-  data: [],
+  message: null,
+  error: null,
+  messages: [], // To store the list of messages
 };
 
 // Redux slice for contact form
@@ -23,27 +22,41 @@ const contactSlice = createSlice({
   reducers: {
     // Reset state to initial values
     resetState: () => initialState,
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(sendMessage.pending, (state) => {
-        state.status = STATUS_PENDING;
-        state.message = null; // Clear previous message
-        state.error = null; // Clear previous error
-      })
-      .addCase(sendMessage.fulfilled, (state, action) => {
-        state.status = STATUS_SUCCEEDED;
-        state.message = "Message sent successfully!"; // Success message
-        state.error = null;
-      })
-      .addCase(sendMessage.rejected, (state, action) => {
-        state.status = STATUS_FAILED;
-        state.message = null; // Clear previous success message
-        state.error = action.payload || ERROR_MESSAGE_DEFAULT; // Error message
-      });
+    sendMessageRequest: (state) => {
+      state.status = STATUS_PENDING;
+      state.error = null;
+    },
+    sendMessageSuccess: (state, action) => {
+      state.status = STATUS_SUCCEEDED;
+      state.message = action.payload;
+    },
+    sendMessageFailure: (state, action) => {
+      state.status = STATUS_FAILED;
+      state.error = action.payload || ERROR_MESSAGE_DEFAULT;
+    },
+    fetchMessagesRequest: (state) => {
+      state.status = STATUS_PENDING;
+      state.error = null;
+    },
+    fetchMessagesSuccess: (state, action) => {
+      state.status = STATUS_SUCCEEDED;
+      state.messages = action.payload;
+    },
+    fetchMessagesFailure: (state, action) => {
+      state.status = STATUS_FAILED;
+      state.error = action.payload || ERROR_MESSAGE_DEFAULT;
+    },
   },
 });
 
-export const { resetState } = contactSlice.actions;
+export const {
+  resetState,
+  sendMessageRequest,
+  sendMessageSuccess,
+  sendMessageFailure,
+  fetchMessagesRequest,
+  fetchMessagesSuccess,
+  fetchMessagesFailure,
+} = contactSlice.actions;
 
 export default contactSlice.reducer;

@@ -1,13 +1,21 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { createWrapper } from "next-redux-wrapper";
+import createSagaMiddleware from "redux-saga";
 import contactReducer from "./store/contact/contactSlice";
+import contactSaga from "./store/contact/contactSaga";
 
-const makeStore = () =>
-  configureStore({
-    reducer: {
-      contact: contactReducer,
-    },
-  });
+// Create the Saga middleware
+const sagaMiddleware = createSagaMiddleware();
 
-export const wrapper = createWrapper(makeStore);
-export const store = makeStore();
+// Configure store
+const store = configureStore({
+  reducer: {
+    contact: contactReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware), // Disable thunk, add saga middleware
+});
+
+// Run the Saga middleware
+sagaMiddleware.run(contactSaga);
+
+export default store;
