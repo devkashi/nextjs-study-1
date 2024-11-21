@@ -1,6 +1,11 @@
 "use client";
-import React, { useState } from "react";
 
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import { sendMessage } from "../store/contact/contactThunks";
+import { resetState } from "../store/contact/contactSlice";
+import AlertComponent from "../components/AlertComponent/AlertComponent";
 import "../home/style.css";
 
 export default function Contact() {
@@ -9,6 +14,12 @@ export default function Contact() {
     email: "",
     message: "",
   });
+
+  const [alertType, setAlertType] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const dispatch = useDispatch();
+  const { status, error } = useSelector((state) => state.contact);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,9 +33,30 @@ export default function Contact() {
     e.preventDefault();
     // Handle form submission (e.g., send form data to a server or email)
     console.log(formData);
+    dispatch(sendMessage(formData)); // Dispatch Axios-based thunk
     // Reset form
     setFormData({ name: "", email: "", message: "" });
   };
+
+  // Determine alert type and message based on Redux status
+  useEffect(() => {
+    if (status === "succeeded") {
+      setAlertMessage("Message sent successfully!");
+      setAlertType("success");
+      // Dispatch resetState after the alert is shown
+      setTimeout(() => {
+        dispatch(resetState());
+      }, 2000); // Delay reset state by 2 seconds
+    } else if (status === "failed") {
+      setAlertMessage(`Something went wrong: ${error}`);
+      setAlertType("error");
+      // Dispatch resetState after the alert is shown
+      setTimeout(() => {
+        dispatch(resetState());
+      }, 2000); // Delay reset state by 2 seconds
+    }
+  }, [status, error, dispatch]); // Adding dispatch to dependencies
+
   return (
     <>
       <div className="max-w-2xl mx-auto px-6 py-8 bg-white rounded-lg shadow-md">
@@ -92,13 +124,25 @@ export default function Contact() {
           {/* Submit Button */}
           <div>
             <button
+              disabled={status === "pending"}
               type="submit"
               className="w-full py-3 mt-4 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"
             >
-              Send Message
+              {status === "pending" ? "Sending..." : "Send Message"}
             </button>
           </div>
         </form>
+
+        {alertMessage && alertType && (
+          <AlertComponent
+            key={alertMessage} // Add a unique key to force re-render
+            message={alertMessage}
+            type={alertType}
+          />
+        )}
+
+        {/* ToastContainer for react-toastify */}
+        <ToastContainer />
       </div>
     </>
   );
