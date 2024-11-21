@@ -13,6 +13,7 @@ const initialState = {
   status: STATUS_IDLE,
   message: null, // Holds success message
   error: null, // Holds error message
+  data: [],
 };
 
 // Redux slice for contact form
