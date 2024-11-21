@@ -22,6 +22,10 @@ export default function Contact() {
   const dispatch = useDispatch();
   const { status, message, error } = useSelector((state) => state.contact);
 
+  console.log("dj status ", status);
+  console.log("dj message ", message);
+  console.log("dj error ", error);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({

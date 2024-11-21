@@ -28,7 +28,7 @@ const contactSlice = createSlice({
     },
     sendMessageSuccess: (state, action) => {
       state.status = STATUS_SUCCEEDED;
-      state.message = action.payload;
+      state.message = action.payload.message;
     },
     sendMessageFailure: (state, action) => {
       state.status = STATUS_FAILED;
