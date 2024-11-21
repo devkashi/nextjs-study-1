@@ -1,25 +1,27 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { ToastContainer } from "react-toastify";
 import { sendMessage } from "../store/contact/contactThunks";
 import { resetState } from "../store/contact/contactSlice";
 import AlertComponent from "../components/AlertComponent/AlertComponent";
 import "../home/style.css";
+import { ToastContainer } from "react-toastify";
+import {
+  STATUS_SUCCEEDED,
+  STATUS_PENDING,
+  STATUS_FAILED,
+} from "../constants/status/status";
 
 export default function Contact() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = React.useState({
     name: "",
     email: "",
     message: "",
   });
 
-  const [alertType, setAlertType] = useState("");
-  const [alertMessage, setAlertMessage] = useState("");
-
   const dispatch = useDispatch();
-  const { status, error } = useSelector((state) => state.contact);
+  const { status, message, error } = useSelector((state) => state.contact);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,31 +33,18 @@ export default function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission (e.g., send form data to a server or email)
-    console.log(formData);
     dispatch(sendMessage(formData)); // Dispatch Axios-based thunk
-    // Reset form
-    setFormData({ name: "", email: "", message: "" });
+    setFormData({ name: "", email: "", message: "" }); // Reset form
   };
 
-  // Determine alert type and message based on Redux status
+  // Handle resetting the state after displaying the message/error
   useEffect(() => {
-    if (status === "succeeded") {
-      setAlertMessage("Message sent successfully!");
-      setAlertType("success");
-      // Dispatch resetState after the alert is shown
+    if (status === STATUS_SUCCEEDED || status === STATUS_FAILED) {
       setTimeout(() => {
-        dispatch(resetState());
-      }, 2000); // Delay reset state by 2 seconds
-    } else if (status === "failed") {
-      setAlertMessage(`Something went wrong: ${error}`);
-      setAlertType("error");
-      // Dispatch resetState after the alert is shown
-      setTimeout(() => {
-        dispatch(resetState());
-      }, 2000); // Delay reset state by 2 seconds
+        dispatch(resetState()); // Reset state after the alert is shown
+      }, 2000);
     }
-  }, [status, error, dispatch]); // Adding dispatch to dependencies
+  }, [status, dispatch]);
 
   return (
     <>
@@ -124,20 +113,21 @@ export default function Contact() {
           {/* Submit Button */}
           <div>
             <button
-              disabled={status === "pending"}
+              disabled={status === STATUS_PENDING}
               type="submit"
               className="w-full py-3 mt-4 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"
             >
-              {status === "pending" ? "Sending..." : "Send Message"}
+              {status === STATUS_PENDING ? "Sending..." : "Send Message"}
             </button>
           </div>
         </form>
 
-        {alertMessage && alertType && (
+        {/* Display the alert */}
+        {(message || error) && (
           <AlertComponent
-            key={alertMessage} // Add a unique key to force re-render
-            message={alertMessage}
-            type={alertType}
+            key={message || error} // Ensure the AlertComponent re-renders
+            message={message || error}
+            type={status === STATUS_SUCCEEDED ? "success" : "error"}
           />
         )}
 

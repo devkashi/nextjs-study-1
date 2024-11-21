@@ -8,11 +8,11 @@ import {
   ERROR_MESSAGE_DEFAULT,
 } from "../../constants/status/status";
 
-// Initial state
+// Initial state for contact form
 const initialState = {
   status: STATUS_IDLE,
-  message: null,
-  error: null,
+  message: null, // Holds success message
+  error: null, // Holds error message
 };
 
 // Redux slice for contact form
@@ -27,15 +27,18 @@ const contactSlice = createSlice({
     builder
       .addCase(sendMessage.pending, (state) => {
         state.status = STATUS_PENDING;
-        state.error = null;
+        state.message = null; // Clear previous message
+        state.error = null; // Clear previous error
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
         state.status = STATUS_SUCCEEDED;
-        state.message = action.payload;
+        state.message = "Message sent successfully!"; // Success message
+        state.error = null;
       })
       .addCase(sendMessage.rejected, (state, action) => {
         state.status = STATUS_FAILED;
-        state.error = action.payload || ERROR_MESSAGE_DEFAULT;
+        state.message = null; // Clear previous success message
+        state.error = action.payload || ERROR_MESSAGE_DEFAULT; // Error message
       });
   },
 });
