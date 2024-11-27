@@ -12,7 +12,7 @@ const initialState = {
   status: STATUS_IDLE,
   message: null,
   error: null,
-  messages: [], // To store the list of messages
+  data: [], // To store the list of messages
 };
 
 // Redux slice for contact form
@@ -40,9 +40,22 @@ const contactSlice = createSlice({
     },
     fetchMessagesSuccess: (state, action) => {
       state.status = STATUS_SUCCEEDED;
-      state.messages = action.payload;
+      state.data = action.payload.data.messages;
     },
     fetchMessagesFailure: (state, action) => {
+      state.status = STATUS_FAILED;
+      state.error = action.payload || ERROR_MESSAGE_DEFAULT;
+    },
+    deleteMessageRequest: (state, action) => {
+      state.status = STATUS_PENDING;
+      state.error = null;
+    },
+    deleteMessageSuccess: (state, action) => {
+      state.status = STATUS_SUCCEEDED;
+      state.message = action.payload.message;
+    },
+
+    deleteMessageFailure: (state, action) => {
       state.status = STATUS_FAILED;
       state.error = action.payload || ERROR_MESSAGE_DEFAULT;
     },
@@ -57,6 +70,9 @@ export const {
   fetchMessagesRequest,
   fetchMessagesSuccess,
   fetchMessagesFailure,
+  deleteMessageRequest,
+  deleteMessageSuccess,
+  deleteMessageFailure,
 } = contactSlice.actions;
 
 export default contactSlice.reducer;

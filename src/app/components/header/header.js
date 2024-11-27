@@ -33,6 +33,13 @@ export default function Header() {
           >
             Contact
           </Link>
+
+          <Link
+            className="text-sm/6 font-semibold text-gray-900 blog"
+            href="/contact-list"
+          >
+            Contact-List
+          </Link>
         </PopoverGroup>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <a href="#" className="text-sm/6 font-semibold text-gray-900">
