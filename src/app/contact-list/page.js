@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useEffect, useState, CSSProperties } from "react";
+import React, { useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -15,6 +14,7 @@ import "../home/style.css";
 import { ToastContainer } from "react-toastify";
 import DeleteModal from "../components/ModalComponent/DeleteModal";
 import EditModal from "../components/ModalComponent/ContactModal";
+import { STATUS_PENDING } from "../constants/status/status";
 
 export default function ContactList() {
   const dispatch = useDispatch();
@@ -25,21 +25,18 @@ export default function ContactList() {
   const [oldName, setOldName] = useState("");
   const [oldEmail, setOldEmail] = useState("");
 
-  let [loading, setLoading] = useState(true);
-
   console.log("open ", open);
   console.log("activeId ", activeId);
 
-  //   spread operator
   const { status, message, error, data } = useSelector(
     (state) => state.contact
   );
 
-  console.log("data kashish", data);
+  console.log("data status", status);
+  console.log("data status", status);
 
-  // Handle resetting the state after displaying the message/error
   useEffect(() => {
-    dispatch(fetchMessagesRequest()); // Reset state after the alert is shown
+    dispatch(fetchMessagesRequest());
   }, [dispatch]);
 
   const handleDelete = (id) => {
@@ -59,14 +56,6 @@ export default function ContactList() {
     setOldEmail(email);
     setOldMessage(message);
   };
-
-  // const handleSaveEdit = (id, name, email, message) => {
-  //   // Dispatch the update action to update the message in the Redux store
-  //   dispatch(updateMessageRequest({ id, name, email, message }));
-
-  //   // Close the modal after saving the edit
-  //   setOpen(false);
-  // };
 
   const overrideStyles = {
     display: "block",
@@ -140,17 +129,20 @@ export default function ContactList() {
           confirmButtonName="Edit"
           title="Update Message"
           contents="Are you sure you want to update this contact form data ?"
-          // handleSaveEdit={handleSaveEdit} // Pass the save handler
         />
 
-        <ClipLoader
-          color={"#000000"}
-          loading={loading}
-          cssOverride={overrideStyles}
-          size={150}
-          aria-label="Loading Spinner"
-          data-testid="loader"
-        />
+        {status === STATUS_PENDING && (
+          <div className="loader-container">
+            <ClipLoader
+              color={"#000000"}
+              loading={status === STATUS_PENDING ? true : false}
+              cssOverride={overrideStyles}
+              size={80}
+              aria-label="Loading Spinner"
+              data-testid="loader"
+            />
+          </div>
+        )}
       </div>
     </>
   );
