@@ -22,6 +22,11 @@ const contactSlice = createSlice({
   reducers: {
     // Reset state to initial values
     resetState: () => initialState,
+    resetState2: (state) => {
+      state.status = STATUS_IDLE;
+      state.error = null;
+      state.message = null;
+    },
     sendMessageRequest: (state) => {
       state.status = STATUS_PENDING;
       state.error = null;
@@ -91,6 +96,7 @@ const contactSlice = createSlice({
 
 export const {
   resetState,
+  resetState2,
   sendMessageRequest,
   sendMessageSuccess,
   sendMessageFailure,

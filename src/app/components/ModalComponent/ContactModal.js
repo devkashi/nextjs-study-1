@@ -7,7 +7,7 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { updateMessageRequest } from "../../store/contact/contactSlice";
 
@@ -105,7 +105,7 @@ export default function EditModal({
             <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
               <button
                 type="button"
-                onClick={handleSubmit}
+                onClick={() => handleSubmit()}
                 className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
               >
                 {confirmButtonName} {/* Save Button */}

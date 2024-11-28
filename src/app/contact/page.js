@@ -45,7 +45,7 @@ export default function Contact() {
     if (status === STATUS_SUCCEEDED || status === STATUS_FAILED) {
       setTimeout(() => {
         dispatch(resetState()); // Reset state after the alert is shown
-      }, 2000);
+      }, 1000);
     }
   }, [status, dispatch]);
 

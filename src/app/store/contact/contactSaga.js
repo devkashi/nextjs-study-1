@@ -76,7 +76,6 @@ function* updateMessagesSaga(action) {
       `http://127.0.0.1:8000/api/update/contact`,
       action.payload
     );
-    console.log("dj ", action.payload);
     yield put(
       updateMessageSuccess({ FormData: action.payload, ...response.data })
     );
