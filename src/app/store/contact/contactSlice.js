@@ -53,9 +53,36 @@ const contactSlice = createSlice({
     deleteMessageSuccess: (state, action) => {
       state.status = STATUS_SUCCEEDED;
       state.message = action.payload.message;
+      // Remove the deleted message from the state
+      const index = state.data.findIndex((msg) => msg.id === action.payload.id);
+      if (index !== -1) {
+        state.data.splice(index, 1);
+      }
     },
 
     deleteMessageFailure: (state, action) => {
+      state.status = STATUS_FAILED;
+      state.error = action.payload || ERROR_MESSAGE_DEFAULT;
+    },
+
+    updateMessageRequest: (state) => {
+      state.status = STATUS_PENDING;
+      state.error = null;
+    },
+
+    updateMessageSuccess: (state, action) => {
+      state.status = STATUS_SUCCEEDED;
+      state.message = action.payload.message;
+      // Find the message in the data array and update it
+      const { id, newEmail, newMessage, newName } = action.payload.FormData;
+      state.data = state.data.map((msg) =>
+        msg.id === id
+          ? { ...msg, name: newName, email: newEmail, message: newMessage }
+          : msg
+      );
+    },
+
+    updateMessageFailure: (state, action) => {
       state.status = STATUS_FAILED;
       state.error = action.payload || ERROR_MESSAGE_DEFAULT;
     },
@@ -73,6 +100,9 @@ export const {
   deleteMessageRequest,
   deleteMessageSuccess,
   deleteMessageFailure,
+  updateMessageRequest,
+  updateMessageSuccess,
+  updateMessageFailure,
 } = contactSlice.actions;
 
 export default contactSlice.reducer;

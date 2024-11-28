@@ -10,6 +10,9 @@ import {
   deleteMessageRequest,
   deleteMessageSuccess,
   deleteMessageFailure,
+  updateMessageRequest,
+  updateMessageSuccess,
+  updateMessageFailure,
 } from "./contactSlice";
 
 // Saga to handle sending a message
@@ -55,10 +58,31 @@ function* deleteMessagesSaga(action) {
       axios.post,
       `http://127.0.0.1:8000/api/delete/contact/${action.payload}`
     );
-    yield put(deleteMessageSuccess(response.data));
+    yield put(deleteMessageSuccess({ id: action.payload, ...response.data }));
   } catch (error) {
     yield put(
       deleteMessageFailure(
+        error.response?.data?.message || "Failed to delete message"
+      )
+    );
+  }
+}
+
+// update
+function* updateMessagesSaga(action) {
+  try {
+    const response = yield call(
+      axios.post,
+      `http://127.0.0.1:8000/api/update/contact`,
+      action.payload
+    );
+    console.log("dj ", action.payload);
+    yield put(
+      updateMessageSuccess({ FormData: action.payload, ...response.data })
+    );
+  } catch (error) {
+    yield put(
+      updateMessageFailure(
         error.response?.data?.message || "Failed to delete message"
       )
     );
@@ -79,7 +103,17 @@ function* watchDeleteMessages() {
   yield takeEvery(deleteMessageRequest.type, deleteMessagesSaga);
 }
 
+function* watchUpdateMessages() {
+  yield takeEvery(updateMessageRequest.type, updateMessagesSaga);
+}
+
 // Root Saga
 export default function* contactSaga() {
-  yield all([watchSendMessage(), watchFetchMessages(), watchDeleteMessages()]);
+  yield all([
+    watchSendMessage(),
+    watchFetchMessages(),
+    watchDeleteMessages(),
+    updateMessagesSaga(),
+    watchUpdateMessages(),
+  ]);
 }
